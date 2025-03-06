@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Linkify Music</title>
   <style>
       body {
@@ -16,6 +16,7 @@
           padding: 10px;
           margin: 10px 0;
           box-sizing: border-box;
+          font-size: 16px; /* 確保字體大小至少 16px，避免 iOS 放大 */
       }
       button {
           padding: 10px 20px;
@@ -51,11 +52,10 @@
       .copy-btn.copied {
           background-color: #4caf50;
       }
-      /* 響應式 YouTube 嵌入 */
       .youtube-embed {
           margin-top: 15px;
           position: relative;
-          padding-top: 56.25%; /* 16:9 寬高比 (9 ÷ 16 = 0.5625) */
+          padding-top: 56.25%;
       }
       .youtube-embed iframe {
           position: absolute;
