@@ -34,7 +34,6 @@
       .error {
           color: red;
       }
-      /* 新增複製按鈕樣式 */
       .copy-btn {
           padding: 8px 16px;
           background-color: #000000;
@@ -43,13 +42,34 @@
           cursor: pointer;
           margin-left: 10px;
           vertical-align: middle;
+          position: relative;
+          transition: background-color 0.3s ease; /* 背景色平滑過渡 */
       }
       .copy-btn:hover {
-          background-color: #333333; /* hover 時變亮一點 */
+          background-color: #333333;
       }
-      /* 調整嵌入影片樣式 */
+      .copy-btn.copied {
+          background-color: #4caf50; /* 複製成功時變綠色 */
+      }
       .youtube-embed {
           margin-top: 15px;
+      }
+      /* 氣泡提示樣式 */
+      .copy-tooltip {
+          position: absolute;
+          top: -30px; /* 出現在按鈕上方 */
+          right: -10px; /* 稍微偏右 */
+          background-color: #333;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          opacity: 0;
+          pointer-events: none; /* 避免干擾滑鼠 */
+          transition: opacity 0.3s ease-out;
+      }
+      .copy-tooltip.visible {
+          opacity: 1;
       }
   </style>
 </head>
@@ -67,27 +87,25 @@
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = '處理中...';
 
-      // 驗證 Spotify URL 是否有效
       if (!spotifyUrl.match(/https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+/)) {
         resultDiv.innerHTML = '<span class="error">請輸入有效的 Spotify 歌曲 URL</span>';
         return;
       }
 
       try {
-        // 向 GAS 後端發送請求
         const gasUrl = 'https://script.google.com/macros/s/AKfycbzgQcYkvYYJzyULZrdyp69zDXEudUve1uWvdEO5hCeG7eBc1aWdxuW8vjWJCq4nQAaeqg/exec';
         const response = await fetch(`${gasUrl}?spotifyUrl=${encodeURIComponent(spotifyUrl)}`);
         if (!response.ok) throw new Error('無法獲取數據');
         const youtubeVideoUrl = await response.text();
 
-        // 提取 YouTube 影片 ID
         const videoId = youtubeVideoUrl.match(/(?:v=)([a-zA-Z0-9_-]+)/)?.[1];
         if (!videoId) throw new Error('無法解析 YouTube 影片 ID');
 
-        // 顯示結果：網址 + 複製按鈕 + 嵌入影片
+        const uniqueId = Date.now();
         resultDiv.innerHTML = `
           YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a>
-          <button class="copy-btn" onclick="copyToClipboard('${youtubeVideoUrl}')">複製</button>
+          <button id="copy-btn-${uniqueId}" class="copy-btn" onclick="copyToClipboard('${youtubeVideoUrl}', 'copy-btn-${uniqueId}', 'copy-tooltip-${uniqueId}')">複製</button>
+          <span id="copy-tooltip-${uniqueId}" class="copy-tooltip">網址已複製！</span>
           <div class="youtube-embed">
             <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
           </div>
@@ -97,14 +115,34 @@
       }
     }
 
-    // 複製到剪貼簿的函數
-    function copyToClipboard(url) {
+    function copyToClipboard(url, buttonId, tooltipId) {
       navigator.clipboard.writeText(url)
         .then(() => {
-          alert('已複製 YouTube 網址到剪貼簿！');
+          const button = document.getElementById(buttonId);
+          const tooltip = document.getElementById(tooltipId);
+
+          // 按鈕效果：變色 + 文字改變
+          button.classList.add('copied');
+          button.textContent = '✔ 已複製';
+
+          // 顯示氣泡提示
+          tooltip.classList.add('visible');
+
+          // 1.5秒後恢復
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.textContent = '複製';
+            tooltip.classList.remove('visible');
+          }, 1500);
         })
         .catch(err => {
-          alert(`複製失敗: ${err}`);
+          const tooltip = document.getElementById(tooltipId);
+          tooltip.textContent = '複製失敗';
+          tooltip.style.backgroundColor = '#ff4444'; // 錯誤時變紅色
+          tooltip.classList.add('visible');
+          setTimeout(() => {
+            tooltip.classList.remove('visible');
+          }, 1500);
         });
     }
   </script>
