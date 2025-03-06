@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linkify Music</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          max-width: 600px;
+          margin: 20px auto;
+          text-align: center;
+      }
+      input[type="text"] {
+          width: 100%;
+          padding: 10px;
+          margin: 10px 0;
+          box-sizing: border-box;
+      }
+      button {
+          padding: 10px 20px;
+          background-color: #4caf50;
+          color: white;
+          border: none;
+          cursor: pointer;
+      }
+      button:hover {
+          background-color: #45a049;
+      }
+      #result {
+          margin-top: 20px;
+          word-wrap: break-word;
+      }
+      .error {
+          color: red;
+      }
+  </style>
+</head>
+<body>
+  <h1>Linkify Music</h1>
+  <span>Spotify 轉 YouTube</span>
+  <p>貼上 Spotify 歌曲網頁 URL，轉換成 YouTube 影片網址</p>
+  <input type="text" id="spotifyUrl" placeholder="例如: https://open.spotify.com/track/54hpc7UxPBdpcsC7xFKEWB">
+  <button type="submit" onclick="convertToYouTube()">轉換</button>
+  <div id="result"></div>
+
+  <script>
+    async function convertToYouTube() {
+      const spotifyUrl = document.getElementById('spotifyUrl').value.trim();
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '處理中...';
+
+      // 驗證 Spotify URL 是否有效
+      if (!spotifyUrl.match(/https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+/)) {
+        resultDiv.innerHTML = '<span class="error">請輸入有效的 Spotify 歌曲 URL</span>';
+        return;
+      }
+
+      try {
+        // 向 GAS 後端發送請求
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbzgQcYkvYYJzyULZrdyp69zDXEudUve1uWvdEO5hCeG7eBc1aWdxuW8vjWJCq4nQAaeqg/exec';
+        const response = await fetch(`${gasUrl}?spotifyUrl=${encodeURIComponent(spotifyUrl)}`);
+        if (!response.ok) throw new Error('無法獲取數據');
+        const youtubeVideoUrl = await response.text();
+
+        // 顯示轉換結果
+        resultDiv.innerHTML = `YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a>`;
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">錯誤: ${error.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
