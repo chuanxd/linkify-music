@@ -34,6 +34,23 @@
       .error {
           color: red;
       }
+      /* 新增複製按鈕樣式 */
+      .copy-btn {
+          padding: 8px 16px;
+          background-color: #000000;
+          color: white;
+          border: none;
+          cursor: pointer;
+          margin-left: 10px;
+          vertical-align: middle;
+      }
+      .copy-btn:hover {
+          background-color: #333333; /* hover 時變亮一點 */
+      }
+      /* 調整嵌入影片樣式 */
+      .youtube-embed {
+          margin-top: 15px;
+      }
   </style>
 </head>
 <body>
@@ -63,11 +80,32 @@
         if (!response.ok) throw new Error('無法獲取數據');
         const youtubeVideoUrl = await response.text();
 
-        // 顯示轉換結果
-        resultDiv.innerHTML = `YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a>`;
+        // 提取 YouTube 影片 ID
+        const videoId = youtubeVideoUrl.match(/(?:v=)([a-zA-Z0-9_-]+)/)?.[1];
+        if (!videoId) throw new Error('無法解析 YouTube 影片 ID');
+
+        // 顯示結果：網址 + 複製按鈕 + 嵌入影片
+        resultDiv.innerHTML = `
+          YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a>
+          <button class="copy-btn" onclick="copyToClipboard('${youtubeVideoUrl}')">複製</button>
+          <div class="youtube-embed">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+          </div>
+        `;
       } catch (error) {
         resultDiv.innerHTML = `<span class="error">錯誤: ${error.message}</span>`;
       }
+    }
+
+    // 複製到剪貼簿的函數
+    function copyToClipboard(url) {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          alert('已複製 YouTube 網址到剪貼簿！');
+        })
+        .catch(err => {
+          alert(`複製失敗: ${err}`);
+        });
     }
   </script>
 </body>
