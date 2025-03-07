@@ -92,26 +92,37 @@
 </head>
 <body>
   <h1>Linkify Music</h1>
-  <span>Spotify 轉 YouTube</span>
-  <p>貼上 Spotify 歌曲網頁 URL，轉換成 YouTube 影片網址</p>
-  <input type="text" id="spotifyUrl" placeholder="例如: https://open.spotify.com/track/54hpc7UxPBdpcsC7xFKEWB">
+  <span>Spotify / Apple Music 轉 YouTube</span>
+  <p>貼上歌曲網頁 URL，轉換成 YouTube 影片網址</p>
+  <input type="text" id="musicUrl" placeholder="例如: https://open.spotify.com/track/54hpc7UxPBdpcsC7xFKEWB">
   <button type="submit" onclick="convertToYouTube()">轉換</button>
   <div id="result"></div>
 
   <script>
     async function convertToYouTube() {
-      const spotifyUrl = document.getElementById('spotifyUrl').value.trim();
+      const musicUrl = document.getElementById('musicUrl').value.trim();
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = '處理中...';
 
-      if (!spotifyUrl.match(/https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+/)) {
-        resultDiv.innerHTML = '<span class="error">請輸入有效的 Spotify 歌曲 URL</span>';
+      // 定義 API URL
+      const spotifyApiUrl = 'https://script.google.com/macros/s/AKfycbymUZlD4mTKxHgmL3K80HVPcRF9BI_hXcCy30qjG-Lpo9jXNcGtLxu2YqIKkQ5WpHDS2A/exec';
+      const appleMusicApiUrl = 'https://script.google.com/macros/s/AKfycbwT4ZuWR6PFgLuj6eUF2nKxlAhrLRh-2l_JMCB9TJZ6xqo9eDIROptGASaNROgLGAlhTg/exec';
+
+      // 檢查 URL 類型
+      let apiUrl, paramName;
+      if (musicUrl.match(/https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+/)) {
+        apiUrl = spotifyApiUrl;
+        paramName = 'spotifyUrl';
+      } else if (musicUrl.match(/https:\/\/music\.apple\.com\//)) {
+        apiUrl = appleMusicApiUrl;
+        paramName = 'url'; // Apple Music API 使用 'url' 作為參數名稱
+      } else {
+        resultDiv.innerHTML = '<span class="error">請輸入有效的 Spotify 或 Apple Music 歌曲 URL</span>';
         return;
       }
 
       try {
-        const gasUrl = 'https://script.google.com/macros/s/AKfycbymUZlD4mTKxHgmL3K80HVPcRF9BI_hXcCy30qjG-Lpo9jXNcGtLxu2YqIKkQ5WpHDS2A/exec';
-        const response = await fetch(`${gasUrl}?spotifyUrl=${encodeURIComponent(spotifyUrl)}`);
+        const response = await fetch(`${apiUrl}?${paramName}=${encodeURIComponent(musicUrl)}`);
         if (!response.ok) throw new Error('無法獲取數據');
         const youtubeVideoUrl = await response.text();
 
