@@ -102,7 +102,7 @@
       }
 
       try {
-        const gasUrl = 'https://script.google.com/macros/s/AKfycbzgQcYkvYYJzyULZrdyp69zDXEudUve1uWvdEO5hCeG7eBc1aWdxuW8vjWJCq4nQAaeqg/exec';
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbymUZlD4mTKxHgmL3K80HVPcRF9BI_hXcCy30qjG-Lpo9jXNcGtLxu2YqIKkQ5WpHDS2A/exec';
         const response = await fetch(`${gasUrl}?spotifyUrl=${encodeURIComponent(spotifyUrl)}`);
         if (!response.ok) throw new Error('無法獲取數據');
         const youtubeVideoUrl = await response.text();
