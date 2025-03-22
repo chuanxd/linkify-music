@@ -3,7 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Linkify Music</title>
+  <title>Linkify Music - 輕鬆轉換Spotify和Apple Music歌曲至YouTube</title>
+  <meta name="description" content="Linkify Music 讓您輕鬆將 Spotify 或 Apple Music 歌曲連結轉換成 YouTube 影片，輕點幾下即可切換音樂平台！">
+  <meta name="keywords" content="音樂轉換, Spotify轉YouTube, Apple Music轉YouTube, 音樂連結, 音樂分享">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://chuanxd.github.io/linkify-music/">
+  <!-- Open Graph tags -->
+  <meta property="og:title" content="Linkify Music - 輕鬆轉換音樂平台">
+  <meta property="og:description" content="將 Spotify 或 Apple Music 歌曲連結轉換成 YouTube 影片">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://chuanxd.github.io/linkify-music/">
+  <!-- <meta property="og:image" content=""> -->
+  <!-- Twitter Card tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Linkify Music - 音樂平台轉換">
+  <meta name="twitter:description" content="將 Spotify 或 Apple Music 歌曲轉成 YouTube 影片">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YPQVQL5MQ"></script>
   <script>
@@ -91,12 +105,47 @@
   </style>
 </head>
 <body>
-  <h1>Linkify Music</h1>
-  <span>Spotify / Apple Music 轉 YouTube</span>
-  <p>貼上歌曲網頁 URL，轉換成 YouTube 影片網址</p>
-  <input type="text" id="musicUrl" placeholder="例如: https://open.spotify.com/track/54hpc7UxPBdpcsC7xFKEWB">
-  <button type="submit" onclick="convertToYouTube()">轉換</button>
-  <div id="result"></div>
+  <header>
+    <h1>Linkify Music</h1>
+    <p><strong>Spotify / Apple Music 轉 YouTube 工具</strong></p>
+  </header>
+
+  <main>
+    <section>
+      <h2>音樂平台連結轉換</h2>
+      <p>貼上歌曲網頁 URL，快速轉換成 YouTube 影片網址，即時預覽並播放音樂</p>
+      <div class="input-container">
+        <label for="musicUrl">輸入音樂連結:</label>
+        <input type="text" id="musicUrl" placeholder="例如: https://open.spotify.com/track/54hpc7UxPBdpcsC7xFKEWB" aria-label="音樂連結輸入">
+        <button type="submit" onclick="convertToYouTube()">轉換</button>
+      </div>
+    </section>
+
+    <section>
+      <div id="result"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Linkify Music. 讓跨平台音樂分享更簡單。</p>
+  </footer>
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Linkify Music",
+    "description": "將 Spotify 或 Apple Music 歌曲連結轉換成 YouTube 影片",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 
   <script>
     async function convertToYouTube() {
