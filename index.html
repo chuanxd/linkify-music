@@ -2,7 +2,10 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#4caf50">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Linkify Music - 輕鬆轉換Spotify和Apple Music歌曲至YouTube</title>
   <meta name="description" content="Linkify Music 讓您輕鬆將 Spotify 或 Apple Music 歌曲連結轉換成 YouTube 影片，輕點幾下即可切換音樂平台！">
   <meta name="keywords" content="音樂轉換, Spotify轉YouTube, Apple Music轉YouTube, 音樂連結, 音樂分享">
@@ -27,80 +30,221 @@
     gtag('config', 'G-3YPQVQL5MQ');
   </script>
   <style>
-      body {
-          font-family: Arial, sans-serif;
-          max-width: 600px;
-          margin: 20px auto;
-          text-align: center;
+      :root {
+          --primary-color: #4caf50;
+          --primary-hover: #45a049;
+          --dark-color: #000000;
+          --dark-hover: #333333;
+          --error-color: #ff4444;
       }
+
+      * {
+          box-sizing: border-box;
+          -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          max-width: 100%;
+          padding: 20px;
+          margin: 0 auto;
+          text-align: center;
+          background-color: #f9f9f9;
+          color: #333;
+          line-height: 1.6;
+      }
+
+      @media (min-width: 640px) {
+          body {
+              max-width: 600px;
+              margin: 20px auto;
+          }
+      }
+
+      h1 {
+          font-size: 1.8rem;
+          margin-top: 0.8em;
+      }
+
+      h2 {
+          font-size: 1.3rem;
+      }
+
       input[type="text"] {
           width: 100%;
-          padding: 10px;
-          margin: 10px 0;
+          padding: 12px;
+          margin: 15px 0;
           box-sizing: border-box;
-          font-size: 16px; /* 確保字體大小至少 16px，避免 iOS 放大 */
+          font-size: 16px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          -webkit-appearance: none; /* Removes iOS default styling */
+          appearance: none;
       }
+
       button {
-          padding: 10px 20px;
-          background-color: #4caf50;
+          padding: 12px 20px;
+          background-color: var(--primary-color);
           color: white;
           border: none;
+          border-radius: 8px;
           cursor: pointer;
+          font-size: 16px;
+          min-height: 44px; /* Minimum touch target size */
+          width: 100%;
+          margin: 10px 0;
+          transition: background-color 0.3s ease;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
-      button:hover {
-          background-color: #45a049;
+
+      @media (min-width: 480px) {
+          button {
+              width: auto;
+          }
       }
+
+      button:hover, button:focus {
+          background-color: var(--primary-hover);
+      }
+
+      button:active {
+          transform: translateY(1px);
+      }
+
       #result {
           margin-top: 20px;
           word-wrap: break-word;
+          background-color: white;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       }
+
       .error {
-          color: red;
+          color: var(--error-color);
+          padding: 10px;
+          background-color: rgba(255,68,68,0.1);
+          border-radius: 8px;
+          display: block;
       }
+
       .copy-btn {
-          padding: 8px 16px;
-          background-color: #000000;
+          padding: 10px 16px;
+          background-color: var(--dark-color);
           color: white;
           border: none;
+          border-radius: 8px;
           cursor: pointer;
-          margin-left: 10px;
+          margin-top: 10px;
+          margin-left: 0;
           vertical-align: middle;
           position: relative;
           transition: background-color 0.3s ease;
+          display: block;
+          width: 100%;
       }
-      .copy-btn:hover {
-          background-color: #333333;
+
+      @media (min-width: 480px) {
+          .copy-btn {
+              display: inline-block;
+              width: auto;
+              margin-left: 10px;
+              margin-top: 0;
+          }
       }
+
+      .copy-btn:hover, .copy-btn:focus {
+          background-color: var(--dark-hover);
+      }
+
       .copy-btn.copied {
-          background-color: #4caf50;
+          background-color: var(--primary-color);
       }
+
       .youtube-embed {
           margin-top: 15px;
           position: relative;
           padding-top: 56.25%;
+          border-radius: 8px;
+          overflow: hidden;
+          background-color: #000;
       }
+
       .youtube-embed iframe {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
+          border: none;
       }
+
       .copy-tooltip {
           position: absolute;
-          top: -30px;
-          right: -10px;
+          top: -40px;
+          left: 50%;
+          transform: translateX(-50%);
           background-color: #333;
           color: white;
-          padding: 4px 8px;
+          padding: 6px 12px;
           border-radius: 4px;
-          font-size: 12px;
+          font-size: 14px;
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.3s ease-out;
+          white-space: nowrap;
+          z-index: 10;
       }
+
       .copy-tooltip.visible {
           opacity: 1;
+      }
+
+      .result-url {
+          word-break: break-all;
+          margin-bottom: 10px;
+          display: block;
+      }
+
+      @media (min-width: 480px) {
+          .result-url {
+              display: inline;
+              margin-bottom: 0;
+          }
+      }
+
+      .input-container {
+          margin-bottom: 20px;
+      }
+
+      footer {
+          margin-top: 40px;
+          font-size: 0.85rem;
+          color: #666;
+      }
+
+      .loading-indicator {
+          margin: 20px auto;
+          padding: 10px;
+          text-align: center;
+          color: #666;
+      }
+
+      .loading-indicator::after {
+          content: '';
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 10px;
+          border: 3px solid rgba(76, 175, 80, 0.3);
+          border-radius: 50%;
+          border-top-color: var(--primary-color);
+          animation: spin 1s ease-in-out infinite;
+          vertical-align: middle;
+      }
+
+      @keyframes spin {
+          to { transform: rotate(360deg); }
       }
   </style>
 </head>
@@ -151,7 +295,7 @@
     async function convertToYouTube() {
       const musicUrl = document.getElementById('musicUrl').value.trim();
       const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = '處理中...';
+      resultDiv.innerHTML = '<div class="loading-indicator">處理中</div>';
 
       // 定義 API URL
       const spotifyApiUrl = 'https://script.google.com/macros/s/AKfycbymUZlD4mTKxHgmL3K80HVPcRF9BI_hXcCy30qjG-Lpo9jXNcGtLxu2YqIKkQ5WpHDS2A/exec';
@@ -180,11 +324,11 @@
 
         const uniqueId = Date.now();
         resultDiv.innerHTML = `
-          YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a>
-          <button id="copy-btn-${uniqueId}" class="copy-btn" onclick="copyToClipboard('${youtubeVideoUrl}', 'copy-btn-${uniqueId}', 'copy-tooltip-${uniqueId}')">複製</button>
+          <span class="result-url">YouTube 網址: <a href="${youtubeVideoUrl}" target="_blank">${youtubeVideoUrl}</a></span>
+          <button id="copy-btn-${uniqueId}" class="copy-btn" onclick="copyToClipboard('${youtubeVideoUrl}', 'copy-btn-${uniqueId}', 'copy-tooltip-${uniqueId}')">複製連結</button>
           <span id="copy-tooltip-${uniqueId}" class="copy-tooltip">網址已複製！</span>
           <div class="youtube-embed">
-            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
           </div>
         `;
       } catch (error) {
@@ -193,30 +337,71 @@
     }
 
     function copyToClipboard(url, buttonId, tooltipId) {
-      navigator.clipboard.writeText(url)
-        .then(() => {
-          const button = document.getElementById(buttonId);
-          const tooltip = document.getElementById(tooltipId);
+      const fallbackCopy = (text) => {
+        // 建立臨時 textarea 元素來複製文字 (iOS fallback)
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";  // 避免滾動至底部
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
 
-          button.classList.add('copied');
-          button.textContent = '✔ 已複製';
-          tooltip.classList.add('visible');
+        let success = false;
+        try {
+          success = document.execCommand('copy');
+        } catch (err) {
+          console.error('Fallback: 複製時出錯', err);
+        }
 
-          setTimeout(() => {
-            button.classList.remove('copied');
-            button.textContent = '複製';
-            tooltip.classList.remove('visible');
-          }, 1500);
-        })
-        .catch(err => {
-          const tooltip = document.getElementById(tooltipId);
-          tooltip.textContent = '複製失敗';
-          tooltip.style.backgroundColor = '#ff4444';
-          tooltip.classList.add('visible');
-          setTimeout(() => {
-            tooltip.classList.remove('visible');
-          }, 1500);
-        });
+        document.body.removeChild(textArea);
+        return success;
+      };
+
+      // 嘗試使用 Clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url)
+          .then(() => showCopySuccess(buttonId, tooltipId))
+          .catch(err => {
+            console.error('Clipboard API 失敗，使用 fallback', err);
+            if (fallbackCopy(url)) {
+              showCopySuccess(buttonId, tooltipId);
+            } else {
+              showCopyError(tooltipId);
+            }
+          });
+      } else {
+        // 對於不支援 Clipboard API 的瀏覽器
+        if (fallbackCopy(url)) {
+          showCopySuccess(buttonId, tooltipId);
+        } else {
+          showCopyError(tooltipId);
+        }
+      }
+    }
+
+    function showCopySuccess(buttonId, tooltipId) {
+      const button = document.getElementById(buttonId);
+      const tooltip = document.getElementById(tooltipId);
+
+      button.classList.add('copied');
+      button.textContent = '✓ 已複製';
+      tooltip.classList.add('visible');
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.textContent = '複製連結';
+        tooltip.classList.remove('visible');
+      }, 1500);
+    }
+
+    function showCopyError(tooltipId) {
+      const tooltip = document.getElementById(tooltipId);
+      tooltip.textContent = '複製失敗';
+      tooltip.style.backgroundColor = '#ff4444';
+      tooltip.classList.add('visible');
+      setTimeout(() => {
+        tooltip.classList.remove('visible');
+      }, 1500);
     }
   </script>
 </body>
